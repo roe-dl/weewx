@@ -65,9 +65,9 @@ import weedb
 import weeutil.config
 import weeutil.weeutil
 import weewx.accum
-import weewx.units
 import weewx.xtypes
 from weeutil.weeutil import timestamp_to_string, to_int, TimeSpan
+from weewx.units import GenWithConvert
 
 log = logging.getLogger(__name__)
 
@@ -708,8 +708,7 @@ def reconfig(old_db_dict, new_db_dict, new_unit_system=None, new_schema=None, dr
             new_schema = weewx.schemas.wview_extended.schema
         with Manager.open_with_create(new_db_dict, schema=new_schema) as new_archive:
             # Wrap the input generator in a unit converter.
-            record_generator = weewx.units.GenWithConvert(old_archive.genBatchRecords(),
-                                                          new_unit_system)
+            record_generator = GenWithConvert(old_archive.genBatchRecords(), new_unit_system)
             if not dry_run:
                 # This is very fast because it is done in a single transaction context:
                 new_archive.addRecord(record_generator)
@@ -1017,7 +1016,7 @@ class DaySummaryManager(Manager):
     # Schemas used by the daily summaries:
     day_schemas = {
         'scalar': [
-            ('dateTime', 'INTEGER NOT NULL UNIQUE PRIMARY KEY'),
+            ('dateTime', 'INTEGER NOT NULL PRIMARY KEY'),
             ('min', 'REAL'),
             ('mintime', 'INTEGER'),
             ('max', 'REAL'),
@@ -1028,7 +1027,7 @@ class DaySummaryManager(Manager):
             ('sumtime', 'INTEGER')
         ],
         'vector': [
-            ('dateTime', 'INTEGER NOT NULL UNIQUE PRIMARY KEY'),
+            ('dateTime', 'INTEGER NOT NULL PRIMARY KEY'),
             ('min', 'REAL'),
             ('mintime', 'INTEGER'),
             ('max', 'REAL'),
@@ -1048,7 +1047,7 @@ class DaySummaryManager(Manager):
 
     # SQL statements used by the metadata in the daily summaries.
     meta_create_str = "CREATE TABLE %s_day__metadata (name CHAR(20) NOT NULL " \
-                      "UNIQUE PRIMARY KEY, value TEXT);"
+                      "PRIMARY KEY, value TEXT);"
     meta_replace_str = "REPLACE INTO %s_day__metadata VALUES(?, ?)"
     meta_select_str = "SELECT value FROM %s_day__metadata WHERE name=?"
 
