@@ -1,5 +1,5 @@
 #
-#    Copyright (c) 2009-2024 Tom Keffer <tkeffer@gmail.com> and Matthew Wall
+#    Copyright (c) 2009-2025 Tom Keffer <tkeffer@gmail.com> and Matthew Wall
 #
 #    See the file LICENSE.txt for your full rights.
 #
@@ -108,6 +108,9 @@ class ExtensionEngine:
         if ans == 'n':
             self.printer.out("Nothing done.")
             return
+
+        # If necessary, expand '~' in the path
+        extension_path = os.path.expanduser(extension_path)
 
         # Figure out what extension_path is
         if extension_path.startswith('http'):
