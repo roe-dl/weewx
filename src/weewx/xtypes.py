@@ -1,5 +1,5 @@
 #
-#    Copyright (c) 2019-2024 Tom Keffer <tkeffer@gmail.com>
+#    Copyright (c) 2019-2025 Tom Keffer <tkeffer@gmail.com>
 #
 #    See the file LICENSE.txt for your full rights.
 #
@@ -659,24 +659,6 @@ class DailySummaries(XType):
                  "FROM %(day_table)s "
                  "WHERE dateTime>=%(start)s AND dateTime<%(stop)s %(group_def)s",
     }
-    # Database- and interval-specific "GROUP BY" clauses.
-    group_defs = {
-        'sqlite': {
-            'day': "GROUP BY CAST("
-                   "    (julianday(dateTime,'unixepoch','localtime') - 0.5 "
-                   "       - CAST(julianday(%(sod)s, 'unixepoch','localtime') AS int)) "
-                   "     / %(agg_days)s "
-                   "AS int)",
-            'month': "GROUP BY strftime('%%Y-%%m',dateTime,'unixepoch','localtime') ",
-            'year': "GROUP BY strftime('%%Y',dateTime,'unixepoch','localtime') ",
-        },
-        'mysql': {
-            'day': "GROUP BY TRUNCATE((TO_DAYS(FROM_UNIXTIME(dateTime)) "
-                   "- TO_DAYS(FROM_UNIXTIME(%(sod)s)))/ %(agg_days)s, 0) ",
-            'month': "GROUP BY DATE_FORMAT(FROM_UNIXTIME(dateTime), '%%%%Y-%%%%m') ",
-            'year': "GROUP BY DATE_FORMAT(FROM_UNIXTIME(dateTime), '%%%%Y') ",
-        },
-    }
 
     @staticmethod
     def get_series(obs_type, timespan, db_manager, aggregate_type=None, aggregate_interval=None,
@@ -720,7 +702,7 @@ class DailySummaries(XType):
         else:
             group_by_group = 'day'
         # Add the database-specific GROUP_BY clause to the interpolation dictionary
-        interp_dict['group_def'] = DailySummaries.group_defs[dbtype][group_by_group] % interp_dict
+        interp_dict['group_def'] = db_manager.connection.get_group_by(group_by_group) % interp_dict
         # This is the final SELECT statement.
         sql_stmt = DailySummaries.common[aggregate_type] % interp_dict
 

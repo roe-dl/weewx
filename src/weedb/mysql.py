@@ -208,6 +208,19 @@ class Connection(weedb.Connection):
             # or None, if the variable does not exist.
             return row
 
+    group_defs = {
+        'day': "GROUP BY TRUNCATE((TO_DAYS(FROM_UNIXTIME(dateTime)) "
+               "- TO_DAYS(FROM_UNIXTIME(%(sod)s)))/ %(agg_days)s, 0) ",
+        'month': "GROUP BY DATE_FORMAT(FROM_UNIXTIME(dateTime), '%%%%Y-%%%%m') ",
+        'year': "GROUP BY DATE_FORMAT(FROM_UNIXTIME(dateTime), '%%%%Y') ",
+    }
+
+    @staticmethod
+    def get_group_by(group_name):
+        """Return a GROUP BY clause suitable for MySQL."""
+        # Fail hard if we're given a bad group name:
+        return Connection.group_defs[group_name]
+
     @guard
     def begin(self):
         """Begin a transaction."""

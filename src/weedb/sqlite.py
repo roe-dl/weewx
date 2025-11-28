@@ -1,5 +1,5 @@
 #
-#    Copyright (c) 2009-2024 Tom Keffer <tkeffer@gmail.com>
+#    Copyright (c) 2009-2025 Tom Keffer <tkeffer@gmail.com>
 #
 #    See the file LICENSE.txt for your full rights.
 #
@@ -205,6 +205,22 @@ class Connection(weedb.Connection):
     def has_math(self):
         global has_math
         return has_math
+
+    group_defs = {
+        'day': "GROUP BY CAST("
+               "    (julianday(dateTime,'unixepoch','localtime') - 0.5 "
+               "       - CAST(julianday(%(sod)s, 'unixepoch','localtime') AS int)) "
+               "     / %(agg_days)s "
+               "AS int)",
+        'month': "GROUP BY strftime('%%Y-%%m',dateTime,'unixepoch','localtime') ",
+        'year': "GROUP BY strftime('%%Y',dateTime,'unixepoch','localtime') ",
+    }
+
+    @staticmethod
+    def get_group_by(group_name):
+        """Return a GROUP BY clause suitable for SQLite."""
+        # Fail hard if we're given a bad group name:
+        return Connection.group_defs[group_name]
 
     @guard
     def begin(self):
