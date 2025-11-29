@@ -92,3 +92,24 @@ def dispatch(namespace):
     if hasattr(namespace, 'dry_run') and namespace.dry_run:
         print("This was a dry run. Nothing was actually done.")
         log.info("This was a dry run. Nothing was actually done.")
+
+def dispatch_with_args(namespace, extra_args):
+    """All weectl commands come here. This function reads the configuration file, sets up logging,
+    then dispatches to the actual action.
+    """
+
+    config_path, config_dict, log = weeutil.startup.start_app('weectl',
+                                                              __name__,
+                                                              namespace.config,
+                                                              None)
+    # Note a dry-run, if applicable:
+    if hasattr(namespace, 'dry_run') and namespace.dry_run:
+        print("This is a dry run. Nothing will actually be done.")
+        log.info("This is a dry run. Nothing will actually be done.")
+
+    # Call the specified action:
+    namespace.action_func(config_dict, namespace, extra_args)
+
+    if hasattr(namespace, 'dry_run') and namespace.dry_run:
+        print("This was a dry run. Nothing was actually done.")
+        log.info("This was a dry run. Nothing was actually done.")

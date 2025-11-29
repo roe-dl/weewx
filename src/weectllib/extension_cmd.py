@@ -78,7 +78,7 @@ def add_subparser(subparsers):
                                           help="Don't ask for confirmation. Just do it.")
     install_extension_parser.add_argument('--verbosity', type=int, default=1, metavar='N',
                                           help="How much information to display (0|1|2|3).")
-    install_extension_parser.set_defaults(func=weectllib.dispatch)
+    install_extension_parser.set_defaults(func=weectllib.dispatch_with_args)
     install_extension_parser.set_defaults(action_func=install_extension)
 
     # ---------- Action uninstall' ----------
@@ -111,9 +111,9 @@ def list_extensions(config_dict, _):
     ext.enumerate_extensions()
 
 
-def install_extension(config_dict, namespace):
+def install_extension(config_dict, namespace, extra_args=None):
     ext = _get_extension_engine(config_dict, namespace.dry_run, namespace.verbosity)
-    ext.install_extension(namespace.source, no_confirm=namespace.yes)
+    ext.install_extension(namespace.source, no_confirm=namespace.yes, extra_args=extra_args)
 
 
 def uninstall_extension(config_dict, namespace):

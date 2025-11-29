@@ -33,6 +33,10 @@ class InstallError(Exception):
 class ExtensionInstaller(dict):
     """Base class for extension installers."""
 
+    def process_args(self, args):
+        """Can be overridden by installers. It should parse any extra command line arguments."""
+        pass
+
     def configure(self, engine):
         """Can be overridden by installers. It should return True if the installer modifies
         the configuration dictionary."""
@@ -95,13 +99,15 @@ class ExtensionEngine:
         _, installer = weecfg.get_extension_installer(ext_cache_dir)
         return installer
 
-    def install_extension(self, extension_path, no_confirm=False):
+    def install_extension(self, extension_path, no_confirm=False, extra_args=None):
         """Install an extension.
 
         Args:
             extension_path(str): Either a file path, a directory path, or an URL.
             no_confirm(bool): If False, ask for a confirmation before installing. Otherwise,
                 just do it.
+            extra_args(list[str]|None): Extra arguments from the command line to pass to the
+             extension installer.
         """
         ans = weeutil.weeutil.y_or_n(f"Install extension '{extension_path}' (y/n)? ",
                                      noprompt=no_confirm)
@@ -127,7 +133,7 @@ class ExtensionEngine:
                     filetype = 'zip'
                 else:
                     filetype = 'tar'
-                extension_name = self._install_from_file(test_fd.name, filetype)
+                extension_name = self._install_from_file(test_fd.name, filetype, extra_args)
         elif not os.path.exists(extension_path):
             raise InstallError(f"Path {extension_path} does not exist.")
         elif os.path.isfile(extension_path):
@@ -137,22 +143,24 @@ class ExtensionEngine:
                 filetype = 'zip'
             else:
                 filetype = 'tar'
-            extension_name = self._install_from_file(extension_path, filetype)
+            extension_name = self._install_from_file(extension_path, filetype, extra_args)
         elif os.path.isdir(extension_path):
             # It's a directory. Install directly.
-            extension_name = self.install_from_dir(extension_path)
+            extension_name = self.install_from_dir(extension_path, extra_args)
         else:
             raise InstallError(f"Unrecognized type for {extension_path}")
 
         self.printer.out(f"Finished installing extension {extension_name} from {extension_path}")
 
-    def _install_from_file(self, filepath, filetype):
+    def _install_from_file(self, filepath, filetype, extra_args):
         """Install an extension from a file.
 
         Args:
             filepath(str): A path to the file holding the extension.
             filetype(str): The type of file. If 'zip', it's assumed to be a zipfile. Anything else,
                 and it's assumed to be a tarfile.
+            extra_args(list[str]|None): Extra arguments from the command line to pass to the
+             extension installer.
         """
         # Make a temporary directory into which to extract the file.
         with tempfile.TemporaryDirectory() as dir_name:
@@ -167,11 +175,11 @@ class ExtensionEngine:
                                    "(the extension archive contains more than a "
                                    "single root directory)")
             extension_dir = os.path.join(dir_name, extension_reldir)
-            extension_name = self.install_from_dir(extension_dir)
+            extension_name = self.install_from_dir(extension_dir, extra_args)
 
         return extension_name
 
-    def install_from_dir(self, extension_dir):
+    def install_from_dir(self, extension_dir, extra_args):
         """Install the extension whose components are in extension_dir"""
         self.printer.out(f"Request to install extension found in directory {extension_dir}",
                          level=2)
@@ -209,6 +217,9 @@ class ExtensionEngine:
                             self.config_dict['Engine']['Services'][service_group] = svc_list
                             save_config = True
                         self.printer.out(f"Added new service {svc} to {service_group}.", level=3)
+        # Pass any extra arguments on to the installer
+        if extra_args:
+            installer.process_args(extra_args)
 
         # Give the installer a chance to do any customized configuration
         save_config |= installer.configure(self)
