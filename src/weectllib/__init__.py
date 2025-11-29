@@ -73,43 +73,43 @@ def parse_dates(date=None, from_date=None, to_date=None, as_datetime=False):
 
 
 def dispatch(namespace):
-    """All weectl commands come here. This function reads the configuration file, sets up logging,
-    then dispatches to the actual action.
-    """
+    """Dispatch to the action function without any extra command line args."""
+    _do_dispatch(namespace)
 
-    config_path, config_dict, log = weeutil.startup.start_app('weectl',
-                                                              __name__,
-                                                              namespace.config,
-                                                              None)
-    # Note a dry-run, if applicable:
-    if hasattr(namespace, 'dry_run') and namespace.dry_run:
-        print("This is a dry run. Nothing will actually be done.")
-        log.info("This is a dry run. Nothing will actually be done.")
-
-    # Call the specified action:
-    namespace.action_func(config_dict, namespace)
-
-    if hasattr(namespace, 'dry_run') and namespace.dry_run:
-        print("This was a dry run. Nothing was actually done.")
-        log.info("This was a dry run. Nothing was actually done.")
 
 def dispatch_with_args(namespace, extra_args):
-    """All weectl commands come here. This function reads the configuration file, sets up logging,
-    then dispatches to the actual action.
+    """Dispatch to the action function, passing through any extra command line args."""
+    _do_dispatch(namespace, extra_args)
+
+
+def _do_dispatch(namespace, extra_args=None):
+    """Common dispatch logic for all weectl commands.
+
+    Reads the configuration file, sets up logging, notes dry-run if applicable,
+    and invokes the configured action function with optional extra args.
+
+    Args:
+        namespace: The parsed command line namespace.
+        extra_args: Optional extra command line arguments (if any). Set to None
+        if there cannot be any.
     """
 
     config_path, config_dict, log = weeutil.startup.start_app('weectl',
                                                               __name__,
                                                               namespace.config,
                                                               None)
-    # Note a dry-run, if applicable:
-    if hasattr(namespace, 'dry_run') and namespace.dry_run:
+    dry_run = getattr(namespace, 'dry_run', False)
+    if dry_run:
         print("This is a dry run. Nothing will actually be done.")
         log.info("This is a dry run. Nothing will actually be done.")
 
-    # Call the specified action:
-    namespace.action_func(config_dict, namespace, extra_args)
+    # If extra_args is None, that means that the function dispatch() above was
+    # called. Otherwise, dispatch_with_args() was called.
+    if extra_args is None:
+        namespace.action_func(config_dict, namespace)
+    else:
+        namespace.action_func(config_dict, namespace, extra_args)
 
-    if hasattr(namespace, 'dry_run') and namespace.dry_run:
+    if dry_run:
         print("This was a dry run. Nothing was actually done.")
         log.info("This was a dry run. Nothing was actually done.")

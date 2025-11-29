@@ -218,7 +218,7 @@ class ExtensionEngine:
                             save_config = True
                         self.printer.out(f"Added new service {svc} to {service_group}.", level=3)
         # Pass any extra arguments on to the installer
-        if extra_args:
+        if extra_args is not None:
             installer.process_args(extra_args)
 
         # Give the installer a chance to do any customized configuration
