@@ -16,6 +16,9 @@ Fix problem when importing data into a MySQL database. PR
 Fix problem that prevented `weewxd` from restarting reliably if a MySQL
 connection was lost. Fixes [Issue #1036](https://github.com/weewx/weewx/pull/1036).
 
+Add support for kwargs when using `.series()` tags. PR
+[#1042](https://github.com/weewx/weewx/pull/1042). 
+
 
 ### 5.2.0 10/05/2025
 
