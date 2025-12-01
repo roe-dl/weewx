@@ -16,6 +16,7 @@ __pycache__
 # Ignore any misplaced virtual environments
 .venv
 venv
+dev_vend
 
 # Exclude all of the JetBrains .idea directory
 .idea
