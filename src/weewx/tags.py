@@ -386,7 +386,8 @@ class ObservationBinder:
     def series(self, aggregate_type=None,
                aggregate_interval=None,
                time_series='both',
-               time_unit='unix_epoch'):
+               time_unit='unix_epoch',
+               **series_opt_dict):
         """Return a series with the given aggregation type and interval.
 
         Args:
@@ -398,6 +399,8 @@ class ObservationBinder:
                 'both'.
             time_unit (str): Which unit to use for time. Choices are 'unix_epoch', 'unix_epoch_ms',
                 or 'unix_epoch_ns'. Default is 'unix_epoch'.
+            series_option_dict (dict|None): Other options which can be used to customize 
+                calculations. [Optional.]
 
         Returns:
             SeriesHelper.
@@ -414,7 +417,8 @@ class ObservationBinder:
             # The returned values start_vt, stop_vt, and data_vt, will be ValueTuples.
             start_vt, stop_vt, data_vt = weewx.xtypes.get_series(
                 self.obs_type, self.timespan, db_manager,
-                aggregate_type, aggregate_interval)
+                aggregate_type, aggregate_interval,
+                **series_opt_dict)
         except (weewx.UnknownType, weewx.UnknownAggregation):
             # Cannot calculate the series. Convert to AttributeError, which will signal to Cheetah
             # that this type of series is unknown.
