@@ -19,6 +19,10 @@
     method using vagrant
 
 
+## Documentation
+
+- tk Write up how to write an extension. Document extra arguments feature.
+
 ## Drivers
 
 - mw The `fousb` driver needs to be ported to Python 12.  post weewx 5.0 release
