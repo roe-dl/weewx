@@ -5,6 +5,7 @@ mkdocs
 mkdocs-material
 mkdocs-material-extensions
 Pillow>=5.2
+poetry
 PyMySQL[cryptography]
 pyserial>=3.4
 pyusb>=1.0.2
