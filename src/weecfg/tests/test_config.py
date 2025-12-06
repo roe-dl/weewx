@@ -238,18 +238,18 @@ class ExtensionUtilityTest(unittest.TestCase):
         shutil.rmtree('/var/tmp/pmon', ignore_errors=True)
 
     def test_tar_extract(self):
-        member_names = weecfg.extract_tar('./pmon.tar', '/var/tmp')
+        member_names = sorted(weecfg.extract_tar('./pmon.tar', '/var/tmp'))
         self.assertEqual(member_names, ['pmon',
+                                        'pmon/bin',
+                                        'pmon/bin/user',
+                                        'pmon/bin/user/pmon.py',
+                                        'pmon/changelog',
+                                        'pmon/install.py',
                                         'pmon/readme.txt',
                                         'pmon/skins',
                                         'pmon/skins/pmon',
                                         'pmon/skins/pmon/index.html.tmpl',
-                                        'pmon/skins/pmon/skin.conf',
-                                        'pmon/changelog',
-                                        'pmon/install.py',
-                                        'pmon/bin',
-                                        'pmon/bin/user',
-                                        'pmon/bin/user/pmon.py'])
+                                        'pmon/skins/pmon/skin.conf'])
         actual_files = []
         for direc in os.walk('/var/tmp/pmon'):
             for filename in direc[2]:
@@ -257,7 +257,7 @@ class ExtensionUtilityTest(unittest.TestCase):
         self.assertEqual(sorted(actual_files), self.INSTALLED_NAMES)
 
     def test_tgz_extract(self):
-        member_names = weecfg.extract_tar('./pmon.tgz', '/var/tmp')
+        member_names = sorted(weecfg.extract_tar('./pmon.tgz', '/var/tmp'))
         self.assertEqual(member_names, ['pmon',
                                         'pmon/bin',
                                         'pmon/bin/user',
@@ -276,7 +276,7 @@ class ExtensionUtilityTest(unittest.TestCase):
         self.assertEqual(sorted(actual_files), self.INSTALLED_NAMES)
 
     def test_zip_extract(self):
-        member_names = weecfg.extract_zip('./pmon.zip', '/var/tmp')
+        member_names = sorted(weecfg.extract_zip('./pmon.zip', '/var/tmp'))
         self.assertEqual(member_names, ['pmon/',
                                         'pmon/bin/',
                                         'pmon/bin/user/',
@@ -378,7 +378,7 @@ class ExtensionInstallTest(unittest.TestCase):
         self.assertEqual(self.engine.root_dict['SKIN_DIR'], '/var/tmp/wee_test/skins')
 
         # Now install the extension...
-        self.engine.install_extension('./pmon.tgz', no_confirm=True)
+        self.engine.install_extension('./pmon.tgz', no_confirm=True, extra_args=['--foo', 'bar'])
 
         # ... and assert that it got installed correctly
         self.assertTrue(os.path.isfile(os.path.join(self.engine.root_dict['USER_DIR'],
@@ -410,7 +410,8 @@ class ExtensionInstallTest(unittest.TestCase):
                           'database': 'pmon_sqlite'})
         self.assertEqual(test_dict['ProcessMonitor'],
                          {'data_binding': 'pmon_binding',
-                          'process': 'weewxd'})
+                          'process': 'weewxd',
+                          'foo': 'bar'})
 
         self.assertTrue(
             'user.pmon.ProcessMonitor' in test_dict['Engine']['Services']['process_services'])

@@ -7,6 +7,7 @@
 
 import argparse
 import importlib
+import inspect
 import sys
 
 import weewx
@@ -59,15 +60,21 @@ def main():
         module = importlib.import_module(f'weectllib.{subcommand}_cmd')
         module.add_subparser(subparsers)
 
-    # Time to parse the whole tree
-    namespace = parser.parse_args()
-
-    if hasattr(namespace, 'func'):
-        # Call the appropriate action function:
+    # Parse what we can. This gives us access to the namespace.
+    namespace, extra_args = parser.parse_known_args()
+    # Now take a look at the signature of the dispatch function and see how many arguments it has.
+    sig = inspect.signature(namespace.func)
+    if len(sig.parameters) == 1:
+        # No optional arguments. Reparse everything, this time using the more restrictive
+        # parse_args() method. This will raise an error if there are any unrecognized arguments.
+        namespace = parser.parse_args()
         namespace.func(namespace)
+    elif len(sig.parameters) == 2:
+        # Optional arguments are possible. Pass them on to the dispatch function.
+        namespace.func(namespace, extra_args)
     else:
-        # Shouldn't get here. Some sub-subparser failed to include a 'func' argument.
-        parser.print_help()
+        # Shouldn't be here. Some weird dispatch function.
+        raise TypeError(f"Unexpected dispatch function signature: {sig}")
 
 
 if __name__ == "__main__":

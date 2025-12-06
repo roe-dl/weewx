@@ -1,6 +1,12 @@
 WeeWX change history
 --------------------
 
+### 5.3.0 MM/DD/YYYY
+
+Allow extra command line options to be passed to extension installer.
+Addresses issue #[1041](https://github.com/weewx/weewx/issues/1041).
+
+
 ### 5.2.1 MM/DD/YYYY
 
 Remove unnecessary `UNIQUE` index on `PRIMARY KEY` columns in SQLite, achieving
