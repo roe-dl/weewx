@@ -207,7 +207,7 @@ class Almanac:
                  temperature=None,
                  pressure=None,
                  horizon=None,
-                 texts=dict(),
+                 texts=None,
                  formatter=None,
                  converter=None):
         """Initialize an instance of Almanac
@@ -225,7 +225,7 @@ class Almanac:
             pressure (float|None): Observer's atmospheric pressure in **mBars**.
                 [Optional. Default is 1010]
             horizon (float|None): Angle of the horizon in degrees [Optional. Default is zero]
-            texts (dict): a dictionary of language dependent texts, basicly an entry
+            texts (dict|None): a dictionary of language dependent texts, basicly an entry
                 'moon_phases' which holds an array of 8 strings with descriptions of the moon
                 phase. [optional. If not given, then weeutil.Moon.moon_phases will be used]
             formatter (weewx.units.Formatter|None): An instance of weewx.units.Formatter
@@ -233,6 +233,8 @@ class Almanac:
             converter (weewx.units.Converter|None): An instance of weewx.units.Converter
                 with the conversion information to be used.
         """
+        if texts is None:
+            texts = dict()
         self.time_ts = time_ts if time_ts else time.time()
         self.lat = lat
         self.lon = lon
@@ -401,8 +403,8 @@ class PyEphemAlmanacType(AlmanacType):
                                                formatter=almanac_obj.formatter,
                                                converter=almanac_obj.converter)
         elif attr.startswith('previous_') or attr.startswith('next_'):
-            # Prevent availability checks from being misinterpreted as
-            # heavenly bodies.
+            # Prevent anything starting with 'previous_' or 'next_' from being misinterpreted as a
+            # heavenly body.
             raise AttributeError(attr)
         else:
             # The attribute must be a heavenly body (such as 'sun', or 'jupiter').
