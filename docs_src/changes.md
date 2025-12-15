@@ -3,11 +3,17 @@ WeeWX change history
 
 ### 5.3.0 MM/DD/YYYY
 
+Set log-label in sysV init script to 'weewxd-XXX' instead of just 'XXX'
+
+Added rsyslog config example for making logs visible to weewx group without
+having to use any privilege escalation.
+
 Allow extra command line options to be passed to extension installer.
 Addresses issue #[1041](https://github.com/weewx/weewx/issues/1041).
 
-Added Astronomical Units as a unit of length. Added `local_djd` as a unit of _local_ time.
-[PR #998](https://github.com/weewx/weewx/pull/998). Thanks to user Karen!
+Added Astronomical Units as a unit of length. Added `local_djd` as a unit of
+_local_ time. [PR #998](https://github.com/weewx/weewx/pull/998). Thanks to
+user Karen!
 
 
 ### 5.2.1 MM/DD/YYYY
