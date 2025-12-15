@@ -83,7 +83,7 @@ do_start() {
     PROCNAME=$(get_procname $INSTANCE)
     PIDFILE=$WEEWX_RUNDIR/$PROCNAME.pid
     CFGFILE=$WEEWX_CFGDIR/$INSTANCE.conf
-    DAEMON_ARGS="--daemon --log-label=$INSTANCE --pidfile=$PIDFILE $CFGFILE"
+    DAEMON_ARGS="--daemon --log-label=$PROCNAME --pidfile=$PIDFILE $CFGFILE"
 
     if [ ! -f "$CFGFILE" ]; then
         echo "The instance $INSTANCE does not have a config at $CFGFILE"
@@ -190,7 +190,7 @@ RETVAL=0
 case "$CMD" in
     start)
         for i in $INSTANCES; do
-            log_daemon_msg "Starting $DESC" "$i"
+            log_daemon_msg "Starting $DESC $i"
             do_start $i
             case "$?" in
                 0) log_end_msg 0 ;;
@@ -201,7 +201,7 @@ case "$CMD" in
         ;;
     stop)
         for i in $INSTANCES; do
-            log_daemon_msg "Stopping $DESC" "$i"
+            log_daemon_msg "Stopping $DESC $i"
             do_stop $i
             case "$?" in
                 0) log_end_msg 0 ;;
@@ -217,14 +217,14 @@ case "$CMD" in
         ;;
     reload|force-reload)
         for i in $INSTANCES; do
-            log_daemon_msg "Reloading $DESC" "$i"
+            log_daemon_msg "Reloading $DESC $i"
             do_reload $i
             log_end_msg $?
         done
         ;;
     restart)
         for i in $INSTANCES; do
-            log_daemon_msg "Restarting $DESC" "$i"
+            log_daemon_msg "Restarting $DESC $i"
             do_stop $i
             case "$?" in
                 0|1)
