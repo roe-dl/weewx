@@ -36,21 +36,6 @@ else:
              "Change the permissions and try again." % sqdb2_dict['database_name'])
 
 
-class Cursor:
-    """Class to be used to wrap a cursor in a 'with' clause."""
-
-    def __init__(self, db_dict):
-        self.connection = weedb.connect(db_dict)
-        self.cursor = self.connection.cursor()
-
-    def __enter__(self):
-        return self.cursor
-
-    def __exit__(self, etyp, einst, etb):  # @UnusedVariable
-        self.cursor.close()
-        self.connection.close()
-
-
 class Common(unittest.TestCase):
 
     def setUp(self):
