@@ -1,4 +1,4 @@
-This file documents many development-oriented tasks, including:
+This file contains the recipes and lore for packaging and releasing, including:
 
 - release process
 - build environment
