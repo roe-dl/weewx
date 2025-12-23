@@ -6,6 +6,7 @@
 """weedb driver for the MySQL database"""
 
 import decimal
+import re
 
 try:
     # Typically supplied by the "mysqlclient" package.
@@ -258,11 +259,13 @@ class Cursor(weedb.Cursor):
 
         # MySQL uses '%s' as placeholders, so replace the ?'s with %s
         mysql_string = sql_string.replace('?', '%s')
+        # If it hasn't been done already, put backquotes around the reserved word 'interval'
+        updated_sql = re.sub(r"(?<!`)\b(interval)\b(?!`)", r"`\1`", mysql_string)
 
         # Convert sql_tuple to a plain old tuple, just in case it actually
         # derives from tuple, but overrides the string conversion (as is the
         # case with a TimeSpan object):
-        self.cursor.execute(mysql_string, tuple(sql_tuple))
+        self.cursor.execute(updated_sql, tuple(sql_tuple))
 
         return self
 

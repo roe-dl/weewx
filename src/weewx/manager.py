@@ -280,9 +280,8 @@ class Manager:
             # Old style schema:
             table_schema = schema
 
-        # List comprehension of the types, joined together with commas. Put the SQL type in
-        # backquotes, because at least one of them ('interval') is a MySQL reserved word
-        sqltypestr = ', '.join(["`%s` %s" % _type for _type in table_schema])
+        # List comprehension of the types, joined together with commas.
+        sqltypestr = ', '.join(["%s %s" % _type for _type in table_schema])
 
         try:
             with weedb.Transaction(self.connection) as cursor:
@@ -443,9 +442,8 @@ class Manager:
         # Get the values in the same order:
         value_list = [record[k] for k in key_list]
 
-        # This will a string of sql types, separated by commas. Because some weewx sql keys
-        # (notably 'interval') are reserved words in MySQL, put them in backquotes.
-        k_str = ','.join(["`%s`" % k for k in key_list])
+        # This will a string of sql types, separated by commas.
+        k_str = ','.join(["%s" % k for k in key_list])
         # This will be a string with the correct number of placeholder
         # question marks:
         q_str = ','.join('?' * len(key_list))
@@ -461,8 +459,8 @@ class Manager:
         except weedb.IntegrityError:
             if not update:
                 raise
-            set_stmt = ', '.join(["`%s`=?" % k for k in key_list])
-            where_stmt = ' AND '.join(["`%s` <=> ?" % k for k in key_list])
+            set_stmt = ', '.join(["%s=?" % k for k in key_list])
+            where_stmt = ' AND '.join(["%s <=> ?" % k for k in key_list])
             sql_update_stmt = "UPDATE %s SET %s WHERE dateTime = ? AND NOT (%s)" % (self.table_name, set_stmt, where_stmt)
             cursor.execute(sql_update_stmt, value_list + [record['dateTime'],] + value_list)
             if log_success:
@@ -577,7 +575,7 @@ class Manager:
             new_value (float | str): The updated value
         """
 
-        self.connection.execute("UPDATE %s SET `%s`=? WHERE dateTime=?" %
+        self.connection.execute("UPDATE %s SET %s=? WHERE dateTime=?" %
                                 (self.table_name, obs_type), (new_value, timestamp))
 
     def getSql(self, sql, sqlargs=(), cursor=None):
@@ -642,7 +640,7 @@ class Manager:
 
     def _add_column(self, column_name, column_type, cursor):
         """Add a column to the main archive table"""
-        cursor.execute("ALTER TABLE %s ADD COLUMN `%s` %s"
+        cursor.execute("ALTER TABLE %s ADD COLUMN %s %s"
                        % (self.table_name, column_name, column_type))
 
     def rename_column(self, old_column_name, new_column_name):
