@@ -1,6 +1,33 @@
 the makefile target 'code-summary' will display a summary of the codebase.  it
 uses the tool cloc (github.com/AlDanial/cloc).
 
+As of 22dec2025:
+ make code-summary
+cloc --force-lang="HTML",tmpl --force-lang="INI",conf --force-lang="INI",inc src docs_src
+     434 text files.
+     424 unique files.
+      70 files ignored.
+
+github.com/AlDanial/cloc v 1.96  T=0.82 s (520.0 files/s, 153238.4 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                         139           9329          17697          35206
+Markdown                       102           6225              0          24045
+INI                             94           3614              0          16598
+HTML                            44            384              0           7058
+Text                            29            202              0           1439
+Perl                             1             99             84           1027
+CSS                              5            144             76            774
+Bourne Shell                     5             76            101            467
+JavaScript                       2             17             12            172
+XML                              2             10              8             81
+SVG                              1              0              0              1
+-------------------------------------------------------------------------------
+SUM:                           424          20100          17978          86868
+-------------------------------------------------------------------------------
+
+
 As of 10jan2024:
  make code-summary
 cloc --force-lang="HTML",tmpl --force-lang="INI",conf --force-lang="INI",inc src docs_src
