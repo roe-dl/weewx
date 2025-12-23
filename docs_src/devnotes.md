@@ -229,209 +229,6 @@ also decide whether the daily summary optimization can be used
 ([details below](#daily-summaries)). If not, it will use the regular
 archive table.
 
-## Internationalization
-
-Generally, WeeWX is locale aware. It will emit reports using the local
-formatting conventions for date, times, and values.
-
-## Exceptions
-
-In general, your code should not simply swallow an exception. For
-example, this is bad form:
-
-```
-    try:
-        os.rename(oldname, newname)
-    except:
-        pass
-```
-
-While the odds are that if an exception happens it will be because the
-file `oldname` does not exist, that is not guaranteed. It could
-be because of a keyboard interrupt, or a corrupted file system, or
-something else. Instead, you should test explicitly for any expected
-exception, and let the rest go by:
-
-```
-    try:
-        os.rename(oldname, newname)
-    except OSError:
-        pass
-```
-
-WeeWX has a few specialized exception types, used to rationalize all
-the different types of exceptions that could be thrown by the underlying
-libraries. In particular, low-level I/O code can raise a myriad of
-exceptions, such as USB errors, serial errors, network connectivity
-errors, *etc.* All device drivers should catch these exceptions and
-convert them into an exception of type `WeeWxIOError` or one of
-its subclasses.
-
-## Naming conventions
-
-How you name variables makes a big difference in code readability. In
-general, long names are preferable to short names. Instead of this,
-
-```
-p = 990.1
-```
-
-use this,
-
-```
-pressure = 990.1
-```
-
-or, even better, this:
-
-```
-pressure_mbar = 990.1
-```
-
-WeeWX uses a number of conventions to signal the variable type, although
-they are not used consistently.
-
-<table class="no_indent">
-  <caption>Variable suffix conventions</caption>
-  <tr class="first_row">
-    <td>Suffix</td>
-    <td>Example</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td class="code">_ts</td>
-    <td class="code">first_ts</td>
-    <td>Variable is a timestamp in <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch time</a>.</td>
-  </tr>
-  <tr>
-    <td class="code">_dt</td>
-    <td class="code">start_dt</td>
-    <td>Variable is an instance of <a href="https://docs.python.org/3/library/datetime.html#datetime-objects"><span class="code">datetime.datetime</span></a>, usually in <em>local time</em>.</td>
-  </tr>
-  <tr>
-    <td class="code">_d</td>
-    <td class="code">end_d</td>
-    <td>Variable is an instance of <a href="https://docs.python.org/3/library/datetime.html#date-objects"><span class="code">datetime.date</span></a>, usually in <em>local time</em>.</td>
-  </tr>
-  <tr>
-    <td class="code">_tt</td>
-    <td class="code">sod_tt</td>
-    <td>Variable is an instance of <span class="code">time.struct_time</span> (a <a href="https://docs.python.org/3/library/time.html#time.struct_time"><em>time tuple</em>)</a>, usually in <em>local time</em>.</td>
-  </tr>
-  <tr>
-    <td class="code">_vh</td>
-    <td class="code">pressure_vh</td>
-    <td>Variable is an instance of <span class="code">weewx.units.ValueHelper</span>.</td>
-  </tr>
-  <tr>
-    <td class="code">_vt</td>
-    <td class="code">speed_vt</td>
-    <td>Variable is an instance of <span class="code">weewx.units.ValueTuple</span>.</td>
-  </tr>
-</table>
-
-## Code style
-
-Generally, we try to follow the [PEP 8 style
-guide](https://www.python.org/dev/peps/pep-0008/), but there are *many*
-exceptions. In particular, many older WeeWX function names use
-camelCase, but PEP 8 calls for snake_case. Please use snake_case for new
-code.
-
-Most modern code editors, such as Eclipse, or PyCharm, have the ability
-to automatically format code. Resist the temptation and *don't use this
-feature!* Two reasons:
-
-- Unless all developers use the same tool, using the same settings, we
-  will just thrash back and forth between slightly different versions.
-
-- Automatic formatters play a useful role, but some of what they do
-  are really trivial changes, such as removing spaces in otherwise
-  blank lines. Now if someone is trying to figure out what real,
-  syntactic, changes you have made, s/he will have to wade through all
-  those extraneous *changed lines,* trying to find the important
-  stuff.
-
-If you are working with a file where the formatting is so ragged that
-you really must do a reformat, then do it as a separate commit. This
-allows the formatting changes to be clearly distinguished from more
-functional changes.
-
-When invoking functions or instantiating classes, use the fully
-qualified name. Don't do this:
-
-```
-from datetime import datetime
-now = datetime()
-```
-
-Instead, do this:
-
-```
-import datetime
-now = datetime.datetime()
-```
-
-## Git work flow
-
-We use Git as the source control system. If Git is still mysterious to
-you, bookmark this: [*Pro Git*](https://git-scm.com/book/en/v2), then
-read the chapter *Git Basics*. Also recommended is the article [*How to
-Write a Git Commit Message*](https://cbea.ms/git-commit/).
-
-The code is hosted on [GitHub](https://github.com/weewx/weewx). Their
-[documentation](https://docs.github.com/en/get-started) is very
-extensive and helpful.
-
-We generally follow Vincent Driessen's [branching
-model](http://nvie.com/posts/a-successful-git-branching-model/). Ignore
-the complicated diagram at the beginning of the article, and just focus
-on the text. In this model, there are two key branches:
-
-- 'master'. Fixes go into this branch. We tend to use fewer
-  *hot fix* branches and, instead, just incorporate any fixes
-  directly into the branch. Releases are tagged relative to this
-  branch.
-
-- 'development' (called `develop` in Vince's article).
-  This is where new features go. Before a release, they will be merged
-  into the `master` branch.
-
-What this means to you is that if you submit a pull request that
-includes a new feature, make sure you commit your changes relative to
-the *development* branch. If it is just a bug fix, it should be
-committed against the `master` branch.
-
-### Forking the repository
-
-The WeeWX GitHub repository is configured to use
-[GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions)
-to run Continuous Integration (CI) workflows automatically if certain
-`git` operations are done on branches under active development.
-
-This means that CI workflows will also be run on any forks that you may have
-made if the configured `git` action is done. This can be confusing if you get
-an email from GitHub if these tasks fail for some reason on your fork.
-
-To control GitHub Actions for your fork, see the recommended solutions in this
-[GitHub discussion](https://github.com/orgs/community/discussions/26704#discussioncomment-3252979)
-on this topic.
-
-## Tools
-
-### Python
-
-[JetBrain's PyCharm](http://www.jetbrains.com/pycharm/) is exellent,
-and now there's a free Community Edition. It has many advanced
-features, yet is structured that you need not be exposed to them until
-you need them. Highly recommended.
-
-### HTML and Javascript
-
-For Javascript, [JetBrain's
-WebStorm](http://www.jetbrains.com/webstorm/) is excellent, particularly
-if you will be using a framework such as Node.js or Express.js.
-
 ## Daily summaries {#daily-summaries}
 
 This section builds on the section [*The database*](custom/introduction.md#the-database)
@@ -616,6 +413,239 @@ Note that the RMS wind speed can be calculated as
 ```
 math.sqrt(wsquaresum / sumtime)
 ```
+
+## Internationalization
+
+Generally, WeeWX is locale aware. It will emit reports using the local
+formatting conventions for date, times, and values.
+
+## Exceptions
+
+In general, your code should not simply swallow an exception. For
+example, this is bad form:
+
+```
+    try:
+        os.rename(oldname, newname)
+    except:
+        pass
+```
+
+While the odds are that if an exception happens it will be because the
+file `oldname` does not exist, that is not guaranteed. It could
+be because of a keyboard interrupt, or a corrupted file system, or
+something else. Instead, you should test explicitly for any expected
+exception, and let the rest go by:
+
+```
+    try:
+        os.rename(oldname, newname)
+    except OSError:
+        pass
+```
+
+WeeWX has a few specialized exception types, used to rationalize all
+the different types of exceptions that could be thrown by the underlying
+libraries. In particular, low-level I/O code can raise a myriad of
+exceptions, such as USB errors, serial errors, network connectivity
+errors, *etc.* All device drivers should catch these exceptions and
+convert them into an exception of type `WeeWxIOError` or one of
+its subclasses.
+
+## Naming conventions
+
+How you name variables makes a big difference in code readability. In
+general, long names are preferable to short names. Instead of this,
+
+```
+p = 990.1
+```
+
+use this,
+
+```
+pressure = 990.1
+```
+
+or, even better, this:
+
+```
+pressure_mbar = 990.1
+```
+
+WeeWX uses a number of conventions to signal the variable type, although
+they are not used consistently.
+
+<table class="no_indent">
+  <caption>Variable suffix conventions</caption>
+  <tr class="first_row">
+    <td>Suffix</td>
+    <td>Example</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td class="code">_ts</td>
+    <td class="code">first_ts</td>
+    <td>Variable is a timestamp in <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch time</a>.</td>
+  </tr>
+  <tr>
+    <td class="code">_dt</td>
+    <td class="code">start_dt</td>
+    <td>Variable is an instance of <a href="https://docs.python.org/3/library/datetime.html#datetime-objects"><span class="code">datetime.datetime</span></a>, usually in <em>local time</em>.</td>
+  </tr>
+  <tr>
+    <td class="code">_d</td>
+    <td class="code">end_d</td>
+    <td>Variable is an instance of <a href="https://docs.python.org/3/library/datetime.html#date-objects"><span class="code">datetime.date</span></a>, usually in <em>local time</em>.</td>
+  </tr>
+  <tr>
+    <td class="code">_tt</td>
+    <td class="code">sod_tt</td>
+    <td>Variable is an instance of <span class="code">time.struct_time</span> (a <a href="https://docs.python.org/3/library/time.html#time.struct_time"><em>time tuple</em>)</a>, usually in <em>local time</em>.</td>
+  </tr>
+  <tr>
+    <td class="code">_vh</td>
+    <td class="code">pressure_vh</td>
+    <td>Variable is an instance of <span class="code">weewx.units.ValueHelper</span>.</td>
+  </tr>
+  <tr>
+    <td class="code">_vt</td>
+    <td class="code">speed_vt</td>
+    <td>Variable is an instance of <span class="code">weewx.units.ValueTuple</span>.</td>
+  </tr>
+</table>
+
+## Code style
+
+Generally, we try to follow the [PEP 8 style
+guide](https://www.python.org/dev/peps/pep-0008/), but there are *many*
+exceptions. In particular, many older WeeWX function names use
+camelCase, but PEP 8 calls for snake_case. Please use snake_case for new
+code.
+
+Most modern code editors, such as Eclipse, or PyCharm, have the ability
+to automatically format code. Resist the temptation and *don't use this
+feature!* Two reasons:
+
+- Unless all developers use the same tool, using the same settings, we
+  will just thrash back and forth between slightly different versions.
+
+- Automatic formatters play a useful role, but some of what they do
+  are really trivial changes, such as removing spaces in otherwise
+  blank lines. Now if someone is trying to figure out what real,
+  syntactic, changes you have made, s/he will have to wade through all
+  those extraneous *changed lines,* trying to find the important
+  stuff.
+
+If you are working with a file where the formatting is so ragged that
+you really must do a reformat, then do it as a separate commit. This
+allows the formatting changes to be clearly distinguished from more
+functional changes.
+
+When invoking functions or instantiating classes, use the fully
+qualified name. Don't do this:
+
+```
+from datetime import datetime
+now = datetime()
+```
+
+Instead, do this:
+
+```
+import datetime
+now = datetime.datetime()
+```
+
+
+## Unit tests
+
+The code that exercises the code is located in a directory called `tests` in
+each of the component directories.
+
+Prerequisites for running the core tests include:
+  - python 3.7
+  - python-usb
+  - pyephem
+
+Unit tests should put transient files in `/var/tmp/weewx_test` - do not write
+to the source tree.
+
+To run all unit tests (do not run this as root!):
+```
+make test
+```
+
+To clean up after running tests:
+```
+make test-clean
+```
+
+To set up mysql server with user and permissions for testing:
+```
+make test-setup
+```
+
+
+## Git work flow
+
+We use Git as the source control system. If Git is still mysterious to
+you, bookmark this: [*Pro Git*](https://git-scm.com/book/en/v2), then
+read the chapter *Git Basics*. Also recommended is the article [*How to
+Write a Git Commit Message*](https://cbea.ms/git-commit/).
+
+The code is hosted on [GitHub](https://github.com/weewx/weewx). Their
+[documentation](https://docs.github.com/en/get-started) is very
+extensive and helpful.
+
+We generally follow Vincent Driessen's [branching
+model](http://nvie.com/posts/a-successful-git-branching-model/). Ignore
+the complicated diagram at the beginning of the article, and just focus
+on the text. In this model, there are two key branches:
+
+- 'master'. Fixes go into this branch. We tend to use fewer
+  *hot fix* branches and, instead, just incorporate any fixes
+  directly into the branch. Releases are tagged relative to this
+  branch.
+
+- 'development' (called `develop` in Vince's article).
+  This is where new features go. Before a release, they will be merged
+  into the `master` branch.
+
+What this means to you is that if you submit a pull request that
+includes a new feature, make sure you commit your changes relative to
+the *development* branch. If it is just a bug fix, it should be
+committed against the `master` branch.
+
+### Forking the repository
+
+The WeeWX GitHub repository is configured to use
+[GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions)
+to run Continuous Integration (CI) workflows automatically if certain
+`git` operations are done on branches under active development.
+
+This means that CI workflows will also be run on any forks that you may have
+made if the configured `git` action is done. This can be confusing if you get
+an email from GitHub if these tasks fail for some reason on your fork.
+
+To control GitHub Actions for your fork, see the recommended solutions in this
+[GitHub discussion](https://github.com/orgs/community/discussions/26704#discussioncomment-3252979)
+on this topic.
+
+## Tools
+
+### Python
+
+[JetBrain's PyCharm](http://www.jetbrains.com/pycharm/) is exellent,
+and now there's a free Community Edition. It has many advanced
+features, yet is structured that you need not be exposed to them until
+you need them. Highly recommended.
+
+### HTML and Javascript
+
+For Javascript, [JetBrain's
+WebStorm](http://www.jetbrains.com/webstorm/) is excellent, particularly
+if you will be using a framework such as Node.js or Express.js.
 
 ## Glossary
 

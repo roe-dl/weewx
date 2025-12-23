@@ -15,8 +15,7 @@ This file documents many development-oriented tasks, including:
 - defaults
 - signing
 - init systems
-- unit tests
-- testing
+- testing packages and platforms
 
 release process ---------------------------------------------------------------
 
@@ -531,33 +530,7 @@ On systems with SysV (debian):
   - enable weewxd
 
 
-unit tests --------------------------------------------------------------------
-
-prerequisites:
-
-  - python 3.7
-  - python-usb
-  - pyephem
-
-to set up mysql server with user and permissions for testing:
-
-  make test-setup
-
-to run all unit tests:
-
-  make test
-    (note: do not run this as root)
-
-to clean up after running tests:
-
-  make test-clean
-
-guidelines:
-
-unit tests should put transient files in /var/tmp/weewx_test
-
-
-testing -----------------------------------------------------------------------
+testing platforms and packages ------------------------------------------------
 
 what to test when creating debian and redhat packages:
   install, upgrade, remove, purge
