@@ -1,0 +1,37 @@
+Languages and tools -----------------------------------------------------------
+
+WeeWX is writting in Python.  Skins contain template files, some of which are
+rendered to HTML, and some include Javascript.  A single makefile includes
+targets that automate many of the packaging and release tasks.
+
+You do not have to be fluent in all of these languages to contribute to WeeWX.
+
+The 'Notes for developers' in the WeeWX documentation is a must-read for anyone
+who wants to contribute to the WeeWX code, and is very helpful for those who
+want to write extensions to WeeWX.  The notes include the project goals and
+strategies, descriptions of components, naming conventsions, code style, and
+many other things related to writing code for WeeWX.
+
+
+Version control ---------------------------------------------------------------
+
+We use Git as the source control system.  The code is hosted on GitHub.
+
+We generally follow Vincent Driessen's branching model.
+
+http://nvie.com/posts/a-successful-git-branching-model/
+
+Ignore the complicated diagram at the beginning of the article, and just focus
+on the text. In this model, there are two key branches:
+
+    'master'. Fixes go into this branch. We tend to use fewer hot fix branches
+    and, instead, just incorporate any fixes directly into the branch. Releases
+    are tagged relative to this branch.
+
+    'development' (called develop in Vince's article). This is where new
+    features go. Before a release, they will be merged into the master branch.
+
+What this means to you is that if you submit a pull request that includes a
+new feature, make sure you commit your changes relative to the development
+branch. If it is just a bug fix, it should be committed against the master
+branch.
