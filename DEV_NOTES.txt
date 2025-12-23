@@ -1,4 +1,27 @@
-checklist for doing a release:
+This file documents many development-oriented tasks, including:
+
+- release process
+- build environment
+- pre-requisites for building, releasing, and signing
+- how to do various build/test/verify/sign things
+- howto: build the documents
+- howto: build and publish wheels to pypi.org
+- howto: update package repositories
+- packaging
+- apt repository details
+- zypper/yum repository details
+- changelogs
+- shebang
+- defaults
+- signing
+- init systems
+- unit tests
+- testing
+
+release process ---------------------------------------------------------------
+
+Individual steps for doing a release are automated, but the overall process is
+still a manual operation.  This is the process for doing a release:
 
 1. Check weewx.conf for local changes.  In particular, check to make sure:
      1. debug=0 in weewx.conf
@@ -45,6 +68,15 @@ checklist for doing a release:
      2. change version in docs/weedocs.js
      3. change symlink docs/latest
 12. Announce the release to the weewx user's group.
+
+
+build environment -----------------------------------------------------------
+
+The build for each package must be done in the appropriate operating system,
+and we do not support cross-platform building.  For example, to build the
+debian package you must build on a debian system.  There are vagrant files
+in the weewx source tree to automate the setup of build environments for
+creating platform-specific weewx packages.
 
 
 pre-requisites ----------------------------------------------------------------
@@ -104,19 +136,16 @@ how to build wheel and source tarball:
 how to build debian package:
   make debian-changelog
   emacs pkg/debian/changelog    # add package-specific changes, if any
-  git commit -m "update deb changelog" pkg/debian/changelog
   make debian-package
 
 how to build redhat package:
   make redhat-changelog
   emacs pkg/changelog.el       # add package-specific changes, if any
-  git commit -m "update redhat changelog" pkg/changelog.el
   make redhat-package
 
 how to build redhat package:
   make suse-changelog
   emacs pkg/changelog.suse     # add any package-specific changes, if any
-  git commit -m "update suse changelog" pkg/changelog.suse
   make suse-package
 
 how to build redhat packages with custom rpm revision:
@@ -185,15 +214,6 @@ list keys known by rpm:
 
 delete keys known by rpm:
   rpm -e gpg-pubkey-XXXXX
-
-
-build environment -----------------------------------------------------------
-
-The build for each package must be done in the appropriate operating system,
-and we do not support cross-platform building.  For example, to build the
-debian package you must build on a debian system.  There are vagrant files
-in the weewx source tree to automate the setup of build environments for
-creating weewx packages.
 
 
 howto: build the documents --------------------------------------------------
@@ -353,7 +373,7 @@ switch from testing to production (this is done at weewx.com):
   rsync -Oarvz --delete /var/www/html/yum-test/ /var/www/html/yum
 
 
-notes -------------------------------------------------------------------------
+changelogs --------------------------------------------------------------------
 
 there are multiple changelogs:
   docs/changes.md - definitive changelog for the application
@@ -365,6 +385,9 @@ the debian changelog *must* have a version number that matches the app version.
 the redhat package will build if the version numbers do not match.  use the
 redhat-changelog and debian-changelog targets to ensure that changelog versions
 match the application version for a release.
+
+
+packaging ---------------------------------------------------------------------
 
 there are many ways to build a debian package.  first tried dpkg (uses DEBIAN
 dir and is fairly low-level) but that does not create changes and source diffs.
