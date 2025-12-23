@@ -280,12 +280,9 @@ class Manager:
             # Old style schema:
             table_schema = schema
 
-        # List comprehension of the types, joined together with commas.
-        sqltypestr = ', '.join(["%s %s" % _type for _type in table_schema])
-
         try:
             with weedb.Transaction(self.connection) as cursor:
-                cursor.execute("CREATE TABLE %s (%s);" % (self.table_name, sqltypestr))
+                cursor.create_table(self.table_name, table_schema)
         except weedb.DatabaseError as e:
             log.error("Unable to create table '%s' in database '%s': %s",
                       self.table_name, self.database_name, e)

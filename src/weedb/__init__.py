@@ -201,7 +201,19 @@ class Connection:
 
 
 class Cursor:
-    pass
+
+    def execute(self, sql_string, sql_tuple=()):
+        raise NotImplementedError
+
+    def create_table(self, table_name, table_schema):
+        """Create a table with the given name and columns.
+        table_name (str): The name of the table to be created.
+        table_schema (List[Tuple]): List of tuples, each tuple containing 
+            the column name and type.
+        """
+        # List comprehension of the types, joined together with commas.
+        sqltypestr = ', '.join(["%s %s" % _type for _type in table_schema])
+        self.execute("CREATE TABLE %s (%s);" % (table_name, sqltypestr))
 
 
 class Transaction:
