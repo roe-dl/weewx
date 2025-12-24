@@ -15,6 +15,9 @@ Added Astronomical Units as a unit of length. Added `local_djd` as a unit of
 _local_ time. [PR #998](https://github.com/weewx/weewx/pull/998). Thanks to
 user Karen!
 
+Moved database-specific code into the `weedb` module. For example, backticks are
+used to escape the reserved word `interval` only in the MySQL code.
+
 
 ### 5.2.1 MM/DD/YYYY
 
