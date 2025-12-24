@@ -1043,7 +1043,8 @@ class DaySummaryManager(Manager):
     # SQL statements used by the metadata in the daily summaries.
     meta_create_str = "CREATE TABLE %s_day__metadata (name CHAR(20) NOT NULL " \
                       "PRIMARY KEY, value TEXT);"
-    meta_replace_str = "REPLACE INTO %s_day__metadata VALUES(?, ?)"
+    meta_delete_str = "DELETE FROM %s_day__metadata WHERE name = ?;"
+    meta_insert_str = "INSERT INTO %s_day__metadata VALUES(?, ?)"
     meta_select_str = "SELECT value FROM %s_day__metadata WHERE name=?"
 
     def __init__(self, connection, table_name='archive', schema=None):
@@ -1630,12 +1631,14 @@ class DaySummaryManager(Manager):
             _write_tuple = (_sod,) + day_accum[_summary_type].getStatsTuple()
             # ... and an appropriate SQL command with the correct number of question marks ...
             _qmarks = ','.join(len(_write_tuple) * '?')
-            _sql_replace_str = "REPLACE INTO %s_day_%s VALUES(%s)" % (
-                self.table_name, _summary_type, _qmarks)
+            _sql_insert_str = ("INSERT INTO %s_day_%s VALUES(%s)"
+                               % (self.table_name, _summary_type, _qmarks))
             # ... and write to the database. In case the type doesn't appear in the database,
             # be prepared to catch an exception:
             try:
-                cursor.execute(_sql_replace_str, _write_tuple)
+                cursor.execute("DELETE FROM %s_day_%s WHERE dateTime = ?"
+                               % (self.table_name, _summary_type), (_sod,))
+                cursor.execute(_sql_insert_str, _write_tuple)
             except weedb.OperationalError as e:
                 log.error("Replace failed for database %s: %s", self.database_name, e)
 
@@ -1682,8 +1685,8 @@ class DaySummaryManager(Manager):
         _cursor = cursor or self.connection.cursor()
 
         try:
-            _cursor.execute(DaySummaryManager.meta_replace_str % self.table_name,
-                            (key, value))
+            _cursor.execute(DaySummaryManager.meta_delete_str % self.table_name, (key,))
+            _cursor.execute(DaySummaryManager.meta_insert_str % self.table_name, (key, value))
         finally:
             if cursor is None:
                 _cursor.close()
