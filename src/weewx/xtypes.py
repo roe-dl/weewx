@@ -686,7 +686,6 @@ class DailySummaries(XType):
             raise weewx.UnknownAggregation(aggregate_interval)
 
         # We're good. Proceed.
-        dbtype = db_manager.connection.dbtype
         interp_dict = {
             'agg_days': aggregate_interval / 86400,
             'day_table': "%s_day_%s" % (db_manager.table_name, obs_type),
