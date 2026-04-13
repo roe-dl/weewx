@@ -18,6 +18,7 @@ Use better measure of system uptime.
 Fix problem that prevented table headers from appearing in the Seasons's 
 statistics page.
 
+Fix problem with Acurite usb failures in newer kernels. [PR #1080](https://github.com/weewx/weewx/pull/1080)
 
 ### 5.3.1 03/03/2026
 
