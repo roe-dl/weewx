@@ -31,7 +31,7 @@ eventually if they are not reregistered.
 This is disabled by default.
 
 For configuration details consult the 
-[`[[StationRegistry]]`](../../reference/weewx-options/stdrestful/#stationregistry)
+[`[[StationRegistry]]`](../reference/weewx-options/stdrestful/#stationregistry)
 section of the Reference Guide.
 
 ### AWEKAS
@@ -49,7 +49,7 @@ the data.
 This is disabled by default.
 
 For configuration details consult the
-[`[[AWEKAS]]`](../../reference/weewx-options/stdrestful/#awekas) section of the
+[`[[AWEKAS]]`](../reference/weewx-options/stdrestful/#awekas) section of the
 Reference Guide.
 
 ### CWOP
@@ -70,7 +70,7 @@ quality assurance._
 This is disabled by default.
 
 For configuration details consult the
-[`[[CWOP]]`](../../reference/weewx-options/stdrestful/#cwop) section of the
+[`[[CWOP]]`](../reference/weewx-options/stdrestful#cwop) section of the
 Reference Guide.
 
 ### PWSWeather
@@ -88,7 +88,7 @@ Contributor Plan._
 This is disabled by default.
 
 For configuration details consult the
-[`[[PWSweather]]`](../../reference/weewx-options/stdrestful/#pwsweather)
+[`[[PWSweather]]`](../reference/weewx-options/stdrestful#pwsweather)
 section of the Reference Guide.
 
 ### WOW 
@@ -109,7 +109,7 @@ planned for late 2026.....there will be no direct replacement for WOW
 This is disabled by default.
 
 For configuration details consult the
-[`[[WOW]]`](../../reference/weewx-options/stdrestful/#wow)
+[`[[WOW]]`](../reference/weewx-options/stdrestful#wow)
 section of the Reference Guide.
 
 ### WOW-BE
@@ -122,7 +122,7 @@ web site.
 This is disabled by default.
 
 For configuration details consult the
-[`[[WOW-BE]]`](../../reference/weewx-options/stdrestful/#wow-be)
+[`[[WOW-BE]]`](../reference/weewx-options/stdrestful#wow-be)
 section of the Reference Guide.
 
 ### Wunderground
@@ -136,13 +136,13 @@ dating back to 1993.
 This is disabled by default.
 
 For configuration details consult the 
-[`[[Wunderground]]`](../../reference/weewx-options/stdrestful/#wunderground)
+[`[[Wunderground]]`](../reference/weewx-options/stdrestful#wunderground)
 section of the Reference Guide.
 
 <!---------------------------->
 ## StdReport Services
 
-These are located in the [`[StdReport]`](../../reference/weewx-options/stdreport/) section of `weewx.conf`.
+These are located in the [`[StdReport]`](../reference/weewx-options/stdreport/) section of `weewx.conf`.
 
 <!---------------------------->
 
@@ -154,7 +154,7 @@ remote system.
 This is disabled by default.
 
 For configuration details, see the
-  [`[[FTP]]`](../../reference/weewx-options/stdreport/#ftp)
+  [`[[FTP]]`](../reference/weewx-options/stdreport#ftp)
 section of the Reference Guide.
 
 ### RSYNC
@@ -167,7 +167,7 @@ uploader, although it does require some one-time setup by the user.
 This is disabled by default.
 
 For configuration details, consult the 
-[`[[RSYNC]]`](../../reference/weewx-options/stdreport/#rsync)
+[`[[RSYNC]]`](../reference/weewx-options/stdreport#rsync)
 section of the Reference Guide.
 
 

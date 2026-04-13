@@ -84,5 +84,5 @@ than one FTP section under `[StdReport]`:
 See the documentation for the [`[[FTP]]`] [ftp] and [`[[RSYNC]]`] [rsync]
 sections of the configuration file `weewx.conf` for details and options.
 
-[ftp]: ../reference/weewx-options/stdreport.md#ftp "[[FTP]] section"
-[rsync]: ../reference/weewx-options/stdreport.md/#rsync "[[RSYNC]] section"
+[ftp]: ../reference/weewx-options/stdreport/#ftp "[[FTP]] section"
+[rsync]: ../reference/weewx-options/stdreport/#rsync "[[RSYNC]] section"
